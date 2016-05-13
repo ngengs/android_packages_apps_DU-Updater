@@ -24,19 +24,20 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.dirtyunicorns.duupdater.R;
+import com.dirtyunicorns.duupdater.Utils.FileObject;
 
 /**
  * Created by mazwoz on 27.02.15.
  */
-public class FileListAdapter  extends ArrayAdapter<String>{
+public class FileListAdapter  extends ArrayAdapter<FileObject>{
 
     private View row;
-    private String[] fNames;
+    private FileObject[] fObject;
 
-    public FileListAdapter(Context context,String[] fileNames) {
-        super(context, R.layout.list_file_item, fileNames);
+    public FileListAdapter(Context context,FileObject[] files) {
+        super(context, R.layout.list_file_item, files);
 
-        fNames = fileNames;
+        fObject = files;
     }
 
     @SuppressLint("ViewHolder")
@@ -48,7 +49,7 @@ public class FileListAdapter  extends ArrayAdapter<String>{
 
         TextView txtFilename = (TextView) row.findViewById(R.id.txtFilename);
 
-        txtFilename.setText(fNames[position]);
+        txtFilename.setText(fObject[position].filename);
 
         return row;
     }

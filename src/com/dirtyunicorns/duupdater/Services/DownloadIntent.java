@@ -26,13 +26,12 @@ import android.os.Bundle;
 
 import com.dirtyunicorns.duupdater.R;
 import com.dirtyunicorns.duupdater.Utils.Download;
+import com.dirtyunicorns.duupdater.Utils.FileObject;
 import com.dirtyunicorns.duupdater.Utils.Vars;
 
 public class DownloadIntent extends Activity {
 
-    private String dir;
-    private String file;
-    private String url;
+    private FileObject fileObject;
     private Context activity;
     private ProgressDialog mProgressDialog;
     public static Activity thisActivity;
@@ -47,13 +46,10 @@ public class DownloadIntent extends Activity {
 
         Intent i = getIntent();
         if (i.getExtras() != null) {
-            file = i.getStringExtra("fileName");
-            dir = i.getStringExtra("dirName");
+            fileObject = (FileObject)i.getExtras().get("fileObject");
         }
 
         activity = this;
-
-        url = Vars.link + "/" + dir + "/" + file + ".zip";
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -64,7 +60,7 @@ public class DownloadIntent extends Activity {
 
                         // instantiate it within the onCreate method
                         mProgressDialog = new ProgressDialog(activity);
-                        mProgressDialog.setMessage(getString(R.string.download_location_title) + file + " \n\nto /sdcard/Download");
+                        mProgressDialog.setMessage(getString(R.string.download_location_title) + fileObject.filename + " \n\nto /sdcard/Download");
                         mProgressDialog.setIndeterminate(true);
                         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                         mProgressDialog.setCancelable(false);
@@ -77,8 +73,8 @@ public class DownloadIntent extends Activity {
                 			}
                 		});
                         // execute this when the downloader must be fired
-                        downloadTask = new Download(activity, file, mProgressDialog);
-                        downloadTask.execute(url);
+                        downloadTask = new Download(activity, fileObject, mProgressDialog);
+                        downloadTask.execute(fileObject.downloads);
 
                         NotificationManager mNotificationManaager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                         mNotificationManaager.cancel(0);

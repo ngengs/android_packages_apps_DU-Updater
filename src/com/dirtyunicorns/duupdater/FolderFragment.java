@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import com.dirtyunicorns.duupdater.Utils.Dialogs;
+import com.dirtyunicorns.duupdater.Utils.FileObject;
 import com.dirtyunicorns.duupdater.Utils.MainUtils;
 import com.dirtyunicorns.duupdater.Utils.Vars;
 import com.dirtyunicorns.duupdater.adapters.FileListAdapter;
@@ -57,8 +58,8 @@ public class FolderFragment extends Fragment {
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String downloadFile = (String) parent.getItemAtPosition(position);
-                    Dialogs.DownloadDialog(getActivity(), getString(R.string.download_prompt_message), getString(R.string.download_prompt_title), dir, downloadFile);
+                    FileObject downloadFile = (FileObject) parent.getItemAtPosition(position);
+                    Dialogs.DownloadDialog(getActivity(), getString(R.string.download_prompt_message), getString(R.string.download_prompt_title), downloadFile);
                 }
             });
         }

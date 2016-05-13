@@ -24,6 +24,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import com.dirtyunicorns.duupdater.Utils.FileObject;
 import com.dirtyunicorns.duupdater.Utils.MainUtils;
 import java.util.Date;
 
@@ -43,30 +44,29 @@ import com.dirtyunicorns.duupdater.R;
     protected void onHandleIntent(Intent workIntent) {
         String buildType = BuildType().toLowerCase();
         Date[] potUpdates;
-        String[] strPotUpdates;
+        FileObject[] foPotUpdates;
         int i = 0;
 
         if (!buildType.equals("unofficial")) {
 
-            String[] potentialUpdates = MainUtils.getFiles(buildType.substring(0,1).toUpperCase() + buildType.substring(1));
+            FileObject[] potentialUpdates = MainUtils.getFiles(buildType.substring(0,1).toUpperCase() + buildType.substring(1));
 
             if (potentialUpdates != null) {
                 potUpdates = new Date[potentialUpdates.length];
-                strPotUpdates = new String[potentialUpdates.length];
-                for (String update : potentialUpdates) {
+                foPotUpdates = new FileObject[potentialUpdates.length];
+                for (FileObject update : potentialUpdates) {
                     Date buildDate = MainUtils.StringtoDate(BuildDate());
-                    Date updateDate = MainUtils.StringtoDate(GetDateFromUpdate(update));
+                    Date updateDate = MainUtils.StringtoDate(GetDateFromUpdate(update.filename));
 
                     if (MainUtils.CompareDates(buildDate,updateDate)) {
                         potUpdates[i] = updateDate;
-                        strPotUpdates[i] = update;
+                        foPotUpdates[i] = update;
                         i++;
                     }
                 }
-                if (strPotUpdates.length > 0) {
+                if (foPotUpdates.length > 0) {
 	                Intent downloadIntent = new Intent(getApplication(), DownloadIntent.class);
-	                downloadIntent.putExtra("fileName", strPotUpdates[i - 1]);
-	                downloadIntent.putExtra("dirName", buildType.substring(0,1).toUpperCase() + buildType.substring(1));
+	                downloadIntent.putExtra("fileObject", foPotUpdates[i-1]);
 	                PendingIntent pendingIntent = PendingIntent.getActivity(getApplication(), 0, downloadIntent, 0);
 	                Notification mBuilder = new Notification.Builder(getApplication())
 	                        .setSmallIcon(android.R.drawable.stat_sys_download_done)

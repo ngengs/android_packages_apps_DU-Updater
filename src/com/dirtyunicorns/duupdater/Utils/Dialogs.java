@@ -28,13 +28,9 @@ import com.dirtyunicorns.duupdater.R;
  */
 public class Dialogs {
 
-    private static String url;
     private static Download downloadTask;
 
-    public static void DownloadDialog(final Context ctx, String text, String title, final String dir, final String file) {
-
-
-        url = Vars.link + "/" + dir + "/" + file + ".zip";
+    public static void DownloadDialog(final Context ctx, String text, String title, final FileObject file) {
 
         new AlertDialog.Builder(ctx)
                 .setIcon(R.drawable.ic_dialog_alert_material)
@@ -47,7 +43,7 @@ public class Dialogs {
 
                         // instantiate it within the onCreate method
                         mProgressDialog = new ProgressDialog(ctx);
-                        mProgressDialog.setMessage(file + ctx.getString(R.string.dialog_downloading));
+                        mProgressDialog.setMessage(file.filename + ctx.getString(R.string.dialog_downloading));
                         mProgressDialog.setIndeterminate(true);
                         mProgressDialog.setCanceledOnTouchOutside(false);
                         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -61,7 +57,7 @@ public class Dialogs {
                 		});
                         // execute this when the downloader must be fired
                         downloadTask = new Download(ctx, file, mProgressDialog);
-                        downloadTask.execute(url);
+                        downloadTask.execute(file.downloads);
                     }
                 })
                 .setNegativeButton("NO", new DialogInterface.OnClickListener() {

@@ -46,8 +46,11 @@ public class MainUtils {
 
 
     private static String[] dirs;
+    private static FileObject[] files;
 
     private static final String TAG_MASTER = "dev_info";
+    private static final String URL_CHECK = "http://download.dirtyunicorns.com";
+    private static final String URL_PATH = URL_CHECK + "/json.php?";
 
     private static ConnectivityManager connectivityManager;
     private static boolean connected = false;
@@ -62,8 +65,7 @@ public class MainUtils {
                 Looper.prepare();
                 JSONParser jsonParser = new JSONParser();
 
-                String path = "http://download.dirtyunicorns.com/json.php?device=" + Build.UPDATER;
-                Vars.link = "http://download.dirtyunicorns.com/files/" + Build.UPDATER;
+                String path = URL_PATH + "device=" + Build.UPDATER;
 
                 JSONObject json = jsonParser.getJSONFromUrl(path);
                 JSONArray folders = null;
@@ -90,7 +92,7 @@ public class MainUtils {
         return dirs;
     }
 
-    public static String[] getFiles(final String dir) {
+    public static FileObject[] getFiles(final String dir) {
 
 
         Thread t = new Thread(new Runnable() {
@@ -99,17 +101,19 @@ public class MainUtils {
                 Looper.prepare();
                 JSONParser jsonParser = new JSONParser();
 
-                String path = "http://download.dirtyunicorns.com/json.php?device=" + Build.UPDATER + "&folder=" + dir;
+                String path = URL_PATH + "device=" + Build.UPDATER + "&folder=" + dir;
                 JSONObject json = jsonParser.getJSONFromUrl(path);
                 JSONArray folders = null;
                 try{
                     if (json != null) {
                         folders = json.getJSONArray(TAG_MASTER);
-                        dirs = new String[folders.length()];
+                        files = new FileObject[folders.length()];
                         for (int i = 0; i < folders.length(); i++) {
                             JSONObject d = folders.getJSONObject(i);
-                            String id = d.getString("filename").replace(".zip","");
-                            dirs[i] = id;
+                            FileObject file_temp = new FileObject();
+                            file_temp.filename = d.getString("filename").replace(".zip","");
+                            file_temp.downloads = d.getString("downloads");
+                            files[i] = file_temp;
                         }
                     }
                 } catch (Exception e) {
@@ -122,7 +126,7 @@ public class MainUtils {
         while (t.isAlive()) {
             SystemClock.sleep(200);
         }
-        return dirs;
+        return files;
     }
     
     public static boolean isOnline(Context ctx) {
@@ -168,7 +172,7 @@ public class MainUtils {
 			@Override
 			public void run() {
 				try {
-					URL url = new URL("http://download.dirtyunicorns.com");
+					URL url = new URL(URL_CHECK);
 			    	InetAddress address = InetAddress.getByName(url.getHost());
 			    	String temp = address.toString();
 			    	String IP = temp.substring(temp.indexOf("/")+1,temp.length());

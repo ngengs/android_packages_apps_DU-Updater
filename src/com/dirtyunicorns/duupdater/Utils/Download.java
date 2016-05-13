@@ -38,10 +38,10 @@ public class Download extends AsyncTask<String, Integer, String>{
 
     private Context context;
     private PowerManager.WakeLock mWakeLock;
-    private String file;
+    private FileObject file;
     private ProgressDialog mProgressDialog;
 
-    public Download(Context context, String file, ProgressDialog mProgressDialog) {
+    public Download(Context context, FileObject file, ProgressDialog mProgressDialog) {
         this.context = context;
         this.file = file;
         this.mProgressDialog = mProgressDialog;
@@ -70,7 +70,7 @@ public class Download extends AsyncTask<String, Integer, String>{
 
             // download the file
             input = connection.getInputStream();
-            output = new FileOutputStream(Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DOWNLOADS + "/" + file + ".zip");
+            output = new FileOutputStream(Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DOWNLOADS + "/" + file.filename + ".zip");
 
             byte data[] = new byte[4096];
             long total = 0;

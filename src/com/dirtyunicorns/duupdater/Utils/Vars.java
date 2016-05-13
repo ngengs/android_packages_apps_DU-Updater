@@ -25,12 +25,7 @@ public class Vars {
 
     public static int position;
     public static String[] dirs;
-    public static String[] files;
-    public static String link;
+    public static FileObject[] files;
     public static String latesUpdate;
-    public static String currentDir;
-
-    public static void SetActionBar(ActionBar actionBarl){
-    }
 
 }
