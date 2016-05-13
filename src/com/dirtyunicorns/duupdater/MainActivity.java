@@ -66,8 +66,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 PermissionChecker.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     REQUEST_READ_STORAGE_PERMISSION);
-        } else {
-            // Do absolutely NOTHING
         }
 
         // Set up the action bar.
@@ -81,7 +79,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         actionBar.setTitle(getString(R.string.app_name) + " - " + phoneModel);
 
-        Vars.SetActionBar(actionBar);
         ctx = this;
 
         if (MainUtils.isOnline(this)) {
