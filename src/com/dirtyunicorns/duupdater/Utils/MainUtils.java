@@ -49,8 +49,8 @@ public class MainUtils {
     private static FileObject[] files;
 
     private static final String TAG_MASTER = "dev_info";
-    private static final String URL_CHECK = "http://www.example.com";
-    private static final String URL_PATH = URL_CHECK + "/api/json";
+    private static final String URL_CHECK = "https://raw.githubusercontent.com";
+    private static final String URL_PATH = URL_CHECK + "/ngengs/DU-Updater-API/du-master";
 
     private static ConnectivityManager connectivityManager;
     private static boolean connected = false;
@@ -65,7 +65,7 @@ public class MainUtils {
                 Looper.prepare();
                 JSONParser jsonParser = new JSONParser();
 
-                String path = URL_PATH + "/" + Build.UPDATER;
+                String path = URL_PATH + "/" + Build.UPDATER + "/api.json";
 
                 JSONObject json = jsonParser.getJSONFromUrl(path);
                 JSONArray folders = null;
@@ -101,7 +101,7 @@ public class MainUtils {
                 Looper.prepare();
                 JSONParser jsonParser = new JSONParser();
 
-                String path = URL_PATH + "/" + Build.UPDATER + "/" + dir;
+                String path = URL_PATH + "/" + Build.UPDATER + "/" + dir + "/api.json";
                 JSONObject json = jsonParser.getJSONFromUrl(path);
                 JSONArray folders = null;
                 try{
