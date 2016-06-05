@@ -47,7 +47,7 @@ import com.dirtyunicorns.duupdater.R;
         FileObject[] foPotUpdates;
         int i = 0;
 
-        if (!buildType.equals("unofficial")) {
+        //if (!buildType.equals("unofficial")) {
 
             FileObject[] potentialUpdates = MainUtils.getFiles(buildType.substring(0,1).toUpperCase() + buildType.substring(1));
 
@@ -80,7 +80,7 @@ import com.dirtyunicorns.duupdater.R;
                 }
             }
 
-        }
+        //}
     }
 
     private String GetDateFromUpdate(String fileName) {
