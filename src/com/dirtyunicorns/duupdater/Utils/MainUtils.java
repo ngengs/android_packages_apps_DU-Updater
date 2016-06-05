@@ -49,8 +49,8 @@ public class MainUtils {
     private static FileObject[] files;
 
     private static final String TAG_MASTER = "dev_info";
-    private static final String URL_CHECK = "http://download.dirtyunicorns.com";
-    private static final String URL_PATH = URL_CHECK + "/json.php?";
+    private static final String URL_CHECK = "http://www.example.com";
+    private static final String URL_PATH = URL_CHECK + "/api/json";
 
     private static ConnectivityManager connectivityManager;
     private static boolean connected = false;
@@ -65,7 +65,7 @@ public class MainUtils {
                 Looper.prepare();
                 JSONParser jsonParser = new JSONParser();
 
-                String path = URL_PATH + "device=" + Build.UPDATER;
+                String path = URL_PATH + "/" + Build.UPDATER;
 
                 JSONObject json = jsonParser.getJSONFromUrl(path);
                 JSONArray folders = null;
@@ -101,7 +101,7 @@ public class MainUtils {
                 Looper.prepare();
                 JSONParser jsonParser = new JSONParser();
 
-                String path = URL_PATH + "device=" + Build.UPDATER + "&folder=" + dir;
+                String path = URL_PATH + "/" + Build.UPDATER + "/" + dir;
                 JSONObject json = jsonParser.getJSONFromUrl(path);
                 JSONArray folders = null;
                 try{
@@ -113,6 +113,7 @@ public class MainUtils {
                             FileObject file_temp = new FileObject();
                             file_temp.filename = d.getString("filename").replace(".zip","");
                             file_temp.downloads = d.getString("downloads");
+                            file_temp.direct = d.getBoolean("direct");
                             files[i] = file_temp;
                         }
                     }

@@ -22,6 +22,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.dirtyunicorns.duupdater.R;
@@ -51,38 +52,43 @@ public class DownloadIntent extends Activity {
 
         activity = this;
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+        if(fileObject.direct){
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 
-                        // instantiate it within the onCreate method
-                        mProgressDialog = new ProgressDialog(activity);
-                        mProgressDialog.setMessage(getString(R.string.download_location_title) + fileObject.filename + " \n\nto /sdcard/Download");
-                        mProgressDialog.setIndeterminate(true);
-                        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                        mProgressDialog.setCancelable(false);
-                        mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
+                            // instantiate it within the onCreate method
+                            mProgressDialog = new ProgressDialog(activity);
+                            mProgressDialog.setMessage(getString(R.string.download_location_title) + fileObject.filename + " \n\nto /sdcard/Download");
+                            mProgressDialog.setIndeterminate(true);
+                            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                            mProgressDialog.setCancelable(false);
+                            mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
 
-                			@Override
+                    			@Override
                 			public void onClick(DialogInterface dialog, int which) {
                 			    downloadTask.cancel(true);
                 				dialog.cancel();
                 			}
                 		});
-                        // execute this when the downloader must be fired
-                        downloadTask = new Download(activity, fileObject, mProgressDialog);
-                        downloadTask.execute(fileObject.downloads);
+                            // execute this when the downloader must be fired
+                            downloadTask = new Download(activity, fileObject, mProgressDialog);
+                            downloadTask.execute(fileObject.downloads);
 
-                        NotificationManager mNotificationManaager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                        mNotificationManaager.cancel(0);
-                    }
-                });
-            }
-        });
-        t.start();
+                            NotificationManager mNotificationManaager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            mNotificationManaager.cancel(0);
+                        }
+                    });
+                }
+            });
+            t.start();
+        } else {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fileObject.downloads));
+            startActivity(browserIntent);
+        }
 
     }
 }

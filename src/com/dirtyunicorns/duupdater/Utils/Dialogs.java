@@ -20,6 +20,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 
 import com.dirtyunicorns.duupdater.R;
 
@@ -55,9 +57,15 @@ public class Dialogs {
                 				dialog.cancel();
                 			}
                 		});
-                        // execute this when the downloader must be fired
-                        downloadTask = new Download(ctx, file, mProgressDialog);
-                        downloadTask.execute(file.downloads);
+
+                        if(file.direct){
+                            // execute this when the downloader must be fired
+                            downloadTask = new Download(ctx, file, mProgressDialog);
+                            downloadTask.execute(file.downloads);
+                        }else{
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(file.downloads));
+                            ctx.startActivity(browserIntent);
+                        }
                     }
                 })
                 .setNegativeButton("NO", new DialogInterface.OnClickListener() {

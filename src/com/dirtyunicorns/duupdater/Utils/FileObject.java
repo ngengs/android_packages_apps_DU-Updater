@@ -9,4 +9,5 @@ import java.io.Serializable;
 public class FileObject implements Serializable{
     public String filename;
     public String downloads;
+    public boolean direct;
 }
