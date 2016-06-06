@@ -49,7 +49,7 @@ public class FolderFragment extends Fragment {
         Bundle bundle = getArguments();
         dir = bundle.getString("dir", "");
 
-        Vars.files = MainUtils.getFiles(dir);
+        Vars.files = MainUtils.getFiles(getActivity().getApplicationContext(), dir);
 
         if (Vars.files.length > 0) {
 

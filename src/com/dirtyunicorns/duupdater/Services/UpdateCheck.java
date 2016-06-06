@@ -49,7 +49,7 @@ import com.dirtyunicorns.duupdater.R;
 
         //if (!buildType.equals("unofficial")) {
 
-            FileObject[] potentialUpdates = MainUtils.getFiles(buildType.substring(0,1).toUpperCase() + buildType.substring(1));
+            FileObject[] potentialUpdates = MainUtils.getFiles(this, buildType.substring(0,1).toUpperCase() + buildType.substring(1));
 
             if (potentialUpdates != null) {
                 potUpdates = new Date[potentialUpdates.length];

@@ -37,6 +37,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.dirtyunicorns.duupdater.R;
+
 /**
  * Created by mazwoz on 12/18/14.
  */
@@ -49,15 +51,19 @@ public class MainUtils {
     private static FileObject[] files;
 
     private static final String TAG_MASTER = "dev_info";
-    private static final String URL_CHECK = "https://raw.githubusercontent.com";
-    private static final String URL_PATH = URL_CHECK + "/ngengs/DU-Updater-API/du-master";
+    private static String URL_PATH;
+    private static String URL_SEPARATOR_DEVICE;
+    private static String URL_SEPARATOR_FOLDER;
+    private static String URL_API_FILE;
 
     private static ConnectivityManager connectivityManager;
     private static boolean connected = false;
     private static boolean DNSGood = false;
 
-    public static String[] getDirs() {
-
+    public static String[] getDirs(Context ctx) {
+        URL_PATH = ctx.getResources().getString(R.string.conf_server_url_main)+ctx.getResources().getString(R.string.conf_server_url_path);
+        URL_SEPARATOR_DEVICE = ctx.getResources().getString(R.string.conf_server_url_separator_device);
+        URL_API_FILE = ctx.getResources().getString(R.string.conf_server_url_api_file);
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -65,7 +71,7 @@ public class MainUtils {
                 Looper.prepare();
                 JSONParser jsonParser = new JSONParser();
 
-                String path = URL_PATH + "/" + Build.UPDATER + "/api.json";
+                String path = URL_PATH + URL_SEPARATOR_DEVICE + Build.UPDATER + URL_API_FILE;
 
                 JSONObject json = jsonParser.getJSONFromUrl(path);
                 JSONArray folders = null;
@@ -92,8 +98,11 @@ public class MainUtils {
         return dirs;
     }
 
-    public static FileObject[] getFiles(final String dir) {
-
+    public static FileObject[] getFiles(Context ctx, final String dir) {
+        URL_PATH = ctx.getResources().getString(R.string.conf_server_url_main)+ctx.getResources().getString(R.string.conf_server_url_path);
+        URL_SEPARATOR_DEVICE = ctx.getResources().getString(R.string.conf_server_url_separator_device);
+        URL_SEPARATOR_FOLDER = ctx.getResources().getString(R.string.conf_server_url_separator_folder);
+        URL_API_FILE = ctx.getResources().getString(R.string.conf_server_url_api_file);
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -101,7 +110,7 @@ public class MainUtils {
                 Looper.prepare();
                 JSONParser jsonParser = new JSONParser();
 
-                String path = URL_PATH + "/" + Build.UPDATER + "/" + dir + "/api.json";
+                String path = URL_PATH + URL_SEPARATOR_DEVICE + Build.UPDATER + URL_SEPARATOR_FOLDER + dir + URL_API_FILE;
                 JSONObject json = jsonParser.getJSONFromUrl(path);
                 JSONArray folders = null;
                 try{
@@ -172,8 +181,9 @@ public class MainUtils {
 
 			@Override
 			public void run() {
-				try {
-					URL url = new URL(URL_CHECK);
+                            try {
+                                URL_PATH = ctx.getResources().getString(R.string.conf_server_url_main);
+				URL url = new URL(URL_PATH);
 			    	InetAddress address = InetAddress.getByName(url.getHost());
 			    	String temp = address.toString();
 			    	String IP = temp.substring(temp.indexOf("/")+1,temp.length());

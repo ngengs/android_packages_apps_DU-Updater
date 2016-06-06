@@ -89,7 +89,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 public void run() {
 
                     new ArrayList<List<Map<String, String>>>();
-                    Vars.dirs = MainUtils.getDirs();
+                    Vars.dirs = MainUtils.getDirs(ctx);
                     if (Vars.dirs != null) {
                     tabTitles = new String[Vars.dirs.length];
                     getTitles();
