@@ -151,9 +151,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        menu.findItem(R.id.hide_launcher).setChecked(!isLauncherIconEnabled());
+        menu.findItem(R.id.hide_app).setChecked(!isAppIconEnabled());
 
         return true;
     }
@@ -161,10 +160,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.hide_launcher:
+            case R.id.hide_app:
                 boolean checked = item.isChecked();
                 item.setChecked(!checked);
-                setLauncherIconEnabled(checked);
+                setAppIconEnabled(checked);
                 return true;
             case R.id.action_settings:
                 Intent intent = new Intent(this, Settings.class);
@@ -175,7 +174,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
     }
 
-    public void setLauncherIconEnabled(boolean enabled) {
+    public void setAppIconEnabled(boolean enabled) {
         int newState;
         PackageManager pm = getPackageManager();
         if (enabled) {
@@ -186,7 +185,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         pm.setComponentEnabledSetting(new ComponentName(this, com.dirtyunicorns.duupdater.LauncherActivity.class), newState, PackageManager.DONT_KILL_APP);
     }
 
-    public boolean isLauncherIconEnabled() {
+    public boolean isAppIconEnabled() {
         PackageManager pm = getPackageManager();
         return (pm.getComponentEnabledSetting(new ComponentName(this, com.dirtyunicorns.duupdater.LauncherActivity.class)) != PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
     }
