@@ -2,6 +2,7 @@ package com.dirtyunicorns.duupdater;
 
 import android.Manifest;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -26,6 +27,7 @@ import android.view.animation.AnimationUtils;
 import com.dirtyunicorns.duupdater.adapters.CardAdapter;
 import com.dirtyunicorns.duupdater.utils.File;
 import com.dirtyunicorns.duupdater.utils.NetUtils;
+import com.dirtyunicorns.duupdater.utils.Preferences;
 import com.dirtyunicorns.duupdater.utils.ServerUtils;
 
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private final static int REQUEST_READ_STORAGE_PERMISSION = 1;
+    private final static int REQUEST_SETTING_ACTIVITY = 100;
     private final static String DIR_OFFICIAL = "Official";
     private final static String DIR_WEEKLIES = "Weeklies";
     private final static String DIR_RC = "Rc";
@@ -54,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         InitInterface();
         InitPermissions();
         InitOfficial();
+
+        com.dirtyunicorns.duupdater.utils.Preferences.themeMe(this);
     }
 
     public void InitInterface() {
@@ -147,8 +152,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.gappstbo:
                 UpdateData(DIR_GAPPS_TBO, false);
                 break;
+            case R.id.settings:
+                startActivityForResult(new Intent(this, SettingActivity.class), REQUEST_SETTING_ACTIVITY);
+                break;
         }
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_SETTING_ACTIVITY){
+            Preferences.themeMe(this);
+        }
     }
 
     @Override
