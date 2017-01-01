@@ -1,36 +1,50 @@
 package com.dirtyunicorns.duupdater;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
-import android.Manifest;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
-import com.dirtyunicorns.duupdater.fragments.FragmentGappsDynamic;
-import com.dirtyunicorns.duupdater.fragments.FragmentGappsTBO;
-import com.dirtyunicorns.duupdater.fragments.FragmentOfficial;
-import com.dirtyunicorns.duupdater.fragments.FragmentRc;
-import com.dirtyunicorns.duupdater.fragments.FragmentWeeklies;
+import com.dirtyunicorns.duupdater.adapters.CardAdapter;
+import com.dirtyunicorns.duupdater.utils.File;
 import com.dirtyunicorns.duupdater.utils.NetUtils;
+import com.dirtyunicorns.duupdater.utils.ServerUtils;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+import java.util.ArrayList;
 
-    private DrawerLayout mDrawerLayout;
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
     private final static int REQUEST_READ_STORAGE_PERMISSION = 1;
+    private final static String DIR_OFFICIAL = "Official";
+    private final static String DIR_WEEKLIES = "Weeklies";
+    private final static String DIR_RC = "Rc";
+    private final static String DIR_GAPPS_DYNAMIC = "gapps/Dynamic";
+    private final static String DIR_GAPPS_TBO = "gapps/TBO";
+    private DrawerLayout mDrawerLayout;
     private Fragment frag;
     private Toolbar toolbar;
+    private Snackbar snackbar;
+    private RecyclerView rv;
+    private CardAdapter adapter;
+    private GetFiles getFiles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,18 +57,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void InitInterface() {
-        View view = findViewById(R.id.content_frame);
-
         assert toolbar != null;
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
 
-        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close){
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
             @Override
-            public void onDrawerClosed(View v){
+            public void onDrawerClosed(View v) {
                 super.onDrawerClosed(v);
             }
 
@@ -65,12 +77,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
         actionBarDrawerToggle.syncState();
 
+        rv = (RecyclerView) findViewById(R.id.rv);
+        rv.setHasFixedSize(true);
+        Animation anim = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
+        rv.setAnimation(anim);
+        rv.animate();
+        adapter = new CardAdapter(this);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setAdapter(adapter);
+        snackbar = Snackbar.make(rv, "", Snackbar.LENGTH_INDEFINITE);
+
         if (!NetUtils.isOnline(this)) {
-            assert view != null;
-            Snackbar.make(view,getString(R.string.no_internet_snackbar), Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Action", null).show();
+            showSnackBar(R.string.no_internet_snackbar);
         } else {
-            NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
             assert navigationView != null;
             navigationView.setNavigationItemSelectedListener(this);
@@ -78,17 +98,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void InitOfficial() {
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
         navigationView.setCheckedItem(R.id.official);
-        frag = new FragmentOfficial();
-        UpdateFragment();
+        UpdateData(DIR_OFFICIAL, true);
     }
 
-    private void UpdateFragment() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_frame, frag);
-        ft.commit();
+    private void UpdateData(String dir, boolean device) {
+        if (NetUtils.isOnline(this)) {
+            if (getFiles != null && getFiles.getStatus() == AsyncTask.Status.RUNNING) {
+                getFiles.cancel(true);
+            }
+            getFiles = new GetFiles(dir, device);
+            getFiles.execute();
+        } else {
+            adapter.removeItem();
+            showSnackBar(R.string.no_internet_snackbar);
+        }
     }
 
     public void InitPermissions() {
@@ -101,38 +127,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        int id = item.getItemId();
-        switch (id){
-
-                case R.id.official:
-                    frag = new FragmentOfficial();
-                    mDrawerLayout.closeDrawers();
-                    UpdateFragment();
-                    break;
-                case R.id.weeklies:
-                    frag = new FragmentWeeklies();
-                    mDrawerLayout.closeDrawers();
-                    UpdateFragment();
-                    break;
-                case R.id.rc:
-                    frag = new FragmentRc();
-                    mDrawerLayout.closeDrawers();
-                    UpdateFragment();
-                    break;
-                case R.id.gappsdynamic:
-                    frag = new FragmentGappsDynamic();
-                    mDrawerLayout.closeDrawers();
-                    UpdateFragment();
-                    break;
-                case R.id.gappstbo:
-                    frag = new FragmentGappsTBO();
-                    mDrawerLayout.closeDrawers();
-                    UpdateFragment();
-                    break;
-            }
-            return true;
+        mDrawerLayout.closeDrawers();
+        hideSnackBar();
+        switch (item.getItemId()) {
+            case R.id.official:
+                UpdateData(DIR_OFFICIAL, true);
+                break;
+            case R.id.weeklies:
+                UpdateData(DIR_WEEKLIES, true);
+                break;
+            case R.id.rc:
+                UpdateData(DIR_RC, true);
+                break;
+            case R.id.gappsdynamic:
+                UpdateData(DIR_GAPPS_DYNAMIC, false);
+                break;
+            case R.id.gappstbo:
+                UpdateData(DIR_GAPPS_TBO, false);
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -155,6 +171,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    public void showSnackBar(int resId) {
+        hideSnackBar();
+        snackbar.setText(resId).show();
+    }
+
+    public void hideSnackBar() {
+        if (snackbar.isShown()) snackbar.dismiss();
+    }
+
+    public boolean isLauncherIconEnabled() {
+        PackageManager pm = getPackageManager();
+        return (pm.getComponentEnabledSetting(new ComponentName(this, com.dirtyunicorns.duupdater.LauncherActivity.class)) != PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
+    }
+
     public void setLauncherIconEnabled(boolean enabled) {
         int newState;
         PackageManager pm = getPackageManager();
@@ -166,40 +196,57 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         pm.setComponentEnabledSetting(new ComponentName(this, com.dirtyunicorns.duupdater.LauncherActivity.class), newState, PackageManager.DONT_KILL_APP);
     }
 
-    public boolean isLauncherIconEnabled() {
-        PackageManager pm = getPackageManager();
-        return (pm.getComponentEnabledSetting(new ComponentName(this, com.dirtyunicorns.duupdater.LauncherActivity.class)) != PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
-    }
-
     public void InitWeeklies() {
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
         navigationView.setCheckedItem(R.id.weeklies);
-        frag = new FragmentWeeklies();
-        UpdateFragment();
+        UpdateData(DIR_WEEKLIES, true);
     }
 
     public void InitRc() {
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
         navigationView.setCheckedItem(R.id.rc);
-        frag = new FragmentRc();
-        UpdateFragment();
+        UpdateData(DIR_RC, true);
     }
 
     public void InitDynamicGapps() {
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
         navigationView.setCheckedItem(R.id.gappsdynamic);
-        frag = new FragmentGappsDynamic();
-        UpdateFragment();
+        UpdateData(DIR_GAPPS_DYNAMIC, false);
     }
 
     public void InitTboGapps() {
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
         navigationView.setCheckedItem(R.id.gappstbo);
-        frag = new FragmentGappsTBO();
-        UpdateFragment();
+        UpdateData(DIR_GAPPS_TBO, false);
+    }
+
+    class GetFiles extends AsyncTask<String, String, ArrayList<File>> {
+
+        private String dir;
+        private Boolean device;
+
+        GetFiles(String dir, boolean device) {
+            this.dir = dir;
+            this.device = device;
+            adapter.removeItem();
+        }
+
+        @Override
+        protected ArrayList<File> doInBackground(String... params) {
+            return ServerUtils.getFiles(dir, device);
+        }
+
+        protected void onPostExecute(ArrayList<File> result) {
+            if (!result.isEmpty()) {
+                adapter.addItem(result);
+            } else {
+                showSnackBar(R.string.no_files_to_show);
+            }
+
+        }
     }
 }
