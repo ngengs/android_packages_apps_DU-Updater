@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/official"
+            android:label="@string/hyperunicorns"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,22 +33,6 @@
             </intent-filter>
             <meta-data android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
-        </activity>
-        <activity
-            android:name=".shortcuts.Weeklies"
-            android:label="@string/weeklies"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".shortcuts.Rc"
-            android:label="@string/rc"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".shortcuts.DynamicGapps"
@@ -73,10 +57,12 @@
         </service>
         <receiver android:name=".receivers.BootReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receivers.AlarmReceiver" android:process=":remote"></receiver>
+        <receiver
+            android:name=".receivers.AlarmReceiver"
+            android:process=":remote" />
     </application>
 
 </manifest>

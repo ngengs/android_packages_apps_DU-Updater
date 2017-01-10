@@ -11,14 +11,10 @@ import java.util.Date;
 
 public class Update {
 
-    protected int majorVersion;
-    protected int minorVersion;
     protected String androidVersion;
     protected String buildType;
     protected Date buildDate;
-    protected boolean isOffical;
-    protected boolean isWeekly;
-    protected boolean isRc;
+    protected boolean isHyperunicorns;
 
     protected String GetProp() {
         String retProp = null;
@@ -45,27 +41,11 @@ public class Update {
         return androidVersion;
     }
 
-    public int getMajorVersion() {
-        return majorVersion;
-    }
-
-    public int getMinorVersion() {
-        return minorVersion;
-    }
-
     public Date getBuildDate() {
         return buildDate;
     }
 
-    public boolean isOfficial() {
-        return isOffical;
-    }
-
-    public boolean isWeekly() {
-        return isWeekly;
-    }
-
-    public boolean isRc() {
-        return isRc;
+    public boolean isHyperunicorns() {
+        return isHyperunicorns;
     }
 }

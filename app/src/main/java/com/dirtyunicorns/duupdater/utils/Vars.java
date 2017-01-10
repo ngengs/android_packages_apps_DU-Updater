@@ -22,7 +22,14 @@ package com.dirtyunicorns.duupdater.utils;
 public class Vars {
 
     protected static String[] dirs;
-    protected static String link = "https://download.dirtyunicorns.com/files/";
+    protected static String link_host = "download.dirtyunicorns.com";
+    protected static String link_scheme = "https";
+    protected static int link_port = 443;
+    protected static String link_path = "/json.php";
+    protected static String link_host_hyperunicorns = "www.ngengs.com";
+    protected static String link_scheme_hyperunicorns = "http";
+    protected static int link_port_hyperunicorns = 80;
+    protected static String link_path_hyperunicorns = "/api/hyperunicorns/json/";
     protected static String device;
     protected static final String TAG_MASTER = "dev_info";
 

@@ -22,10 +22,8 @@ import android.view.View;
 
 import com.dirtyunicorns.duupdater.fragments.FragmentGappsDynamic;
 import com.dirtyunicorns.duupdater.fragments.FragmentGappsTBO;
-import com.dirtyunicorns.duupdater.fragments.FragmentOfficial;
-import com.dirtyunicorns.duupdater.fragments.FragmentRc;
+import com.dirtyunicorns.duupdater.fragments.FragmentHyperunicorns;
 import com.dirtyunicorns.duupdater.fragments.FragmentSettings;
-import com.dirtyunicorns.duupdater.fragments.FragmentWeeklies;
 import com.dirtyunicorns.duupdater.utils.Utils;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -43,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         InitInterface();
         InitPermissions();
-        InitOfficial();
+        InitHyperunicorns();
 
         com.dirtyunicorns.duupdater.utils.Preferences.themeMe(this);
     }
@@ -82,14 +80,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void InitOfficial() {
+    private void InitHyperunicorns() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
-        navigationView.setCheckedItem(R.id.official);
-        frag = new FragmentOfficial();
+        navigationView.setCheckedItem(R.id.hyperunicorns);
+        frag = new FragmentHyperunicorns();
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         assert collapsingToolbarLayout != null;
-        collapsingToolbarLayout.setTitle(getString(R.string.official));
+        collapsingToolbarLayout.setTitle(getString(R.string.hyperunicorns));
         UpdateFragment();
     }
 
@@ -114,20 +112,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         int id = item.getItemId();
         switch (id) {
-            case R.id.official:
-                frag = new FragmentOfficial();
+            case R.id.hyperunicorns:
+                frag = new FragmentHyperunicorns();
                 assert collapsingToolbarLayout != null;
-                collapsingToolbarLayout.setTitle(getString(R.string.official));
-                break;
-            case R.id.weeklies:
-                frag = new FragmentWeeklies();
-                assert collapsingToolbarLayout != null;
-                collapsingToolbarLayout.setTitle(getString(R.string.weeklies));
-                break;
-            case R.id.rc:
-                frag = new FragmentRc();
-                assert collapsingToolbarLayout != null;
-                collapsingToolbarLayout.setTitle(getString(R.string.rc));
+                collapsingToolbarLayout.setTitle(getString(R.string.hyperunicorns));
                 break;
             case R.id.gappsdynamic:
                 frag = new FragmentGappsDynamic();
@@ -143,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 frag = new FragmentSettings();
                 assert collapsingToolbarLayout != null;
                 collapsingToolbarLayout.setTitle(getString(R.string.settings_alt));
-                break;
         }
         mDrawerLayout.closeDrawers();
         hideSnackBar();
@@ -194,22 +181,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             newState = PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
         }
         pm.setComponentEnabledSetting(new ComponentName(this, com.dirtyunicorns.duupdater.LauncherActivity.class), newState, PackageManager.DONT_KILL_APP);
-    }
-
-    public void InitWeeklies() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        assert navigationView != null;
-        navigationView.setCheckedItem(R.id.weeklies);
-        frag = new FragmentWeeklies();
-        UpdateFragment();
-    }
-
-    public void InitRc() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        assert navigationView != null;
-        navigationView.setCheckedItem(R.id.rc);
-        frag = new FragmentRc();
-        UpdateFragment();
     }
 
     public void InitDynamicGapps() {

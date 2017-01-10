@@ -19,7 +19,6 @@ package com.dirtyunicorns.duupdater.utils;
 /**
  * Created by mazwoz on 12/18/14.
  */
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,27 +27,55 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
 public class JSONParser {
 
-    static InputStream is = null;
-    static JSONObject jObj = null;
+    private static InputStream is = null;
+    private static JSONObject jObj = null;
 
     public JSONParser() {
 
     }
 
-    public JSONObject getJSONFromUrl(String url) {
+    public JSONObject getJSONFromUrlHttps(String url) {
 
-        HttpsURLConnection client = null;
-        try{
+        HttpsURLConnection client;
+        try {
             URL jsonURL = new URL(url);
             client = (HttpsURLConnection) jsonURL.openConnection();
             client.setRequestMethod("GET");
-            client.setRequestProperty("Content-Type","application/json");
+            client.setRequestProperty("Content-Type", "application/json");
+            is = new BufferedInputStream(client.getInputStream());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            is.close();
+            jObj = new JSONObject(sb.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jObj;
+
+    }
+
+
+    public JSONObject getJSONFromUrlHttp(String url) {
+
+        HttpURLConnection client;
+        try {
+            URL jsonURL = new URL(url);
+            client = (HttpURLConnection) jsonURL.openConnection();
+            client.setRequestMethod("GET");
+            client.setRequestProperty("Content-Type", "application/json");
             is = new BufferedInputStream(client.getInputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
             StringBuilder sb = new StringBuilder();

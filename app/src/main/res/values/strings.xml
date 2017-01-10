@@ -10,9 +10,7 @@
     <string name="settings">Settings</string>
 
     <!-- Collapsing toolbar titles -->
-    <string name="official">DU Updater - Official</string>
-    <string name="weeklies">DU Updater - Weeklies</string>
-    <string name="rc">DU Updater - Rc</string>
+    <string name="hyperunicorns">Hyperunicorns Updater</string>
     <string name="dynamic_gapps">DU Updater - Dynamic gapps</string>
     <string name="tbo_gapps">DU Updater - TBO gapps</string>
     <string name="settings_alt">DU Updater - Settings</string>
@@ -34,11 +32,11 @@
     <string name="no_files_to_show">No files to show</string>
 
     <!-- Dialogs & Downloads -->
-    <string name="dialog_title">DU Update Available</string>
+    <string name="dialog_title">Hyperunicorns Update Available</string>
     <string name="dialog_download">Download</string>
     <string name="major_version_text">is available for download</string>
     <string name="minor_version_text">An update</string>
-    <string name="build_date_text">A newer build of DU is available for download</string>
+    <string name="build_date_text">A newer build of Hyperunicorns is available for download</string>
     <string name="download_cancelled">Download cancelled</string>
     <string name="du_download">DU Download</string>
     <string name="download_happy">Download finished, happy flashing!</string>
@@ -46,9 +44,7 @@
     <string name="download_failed">Download failed</string>
 
     <!-- Nav drawer items -->
-    <string name="navdrawer_official">Official builds</string>
-    <string name="navdrawer_rc">RC builds</string>
-    <string name="navdrawer_weeklies">Weekly builds</string>
+    <string name="navdrawer_hyperunicorn">Hyperunicorn builds</string>
     <string name="navdrawer_dynamic_gapps">Dynamic gapps</string>
     <string name="navdrawer_tbo_gapps">TBO gapps</string>
 

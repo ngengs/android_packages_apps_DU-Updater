@@ -2,6 +2,7 @@ package com.dirtyunicorns.duupdater.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.FileHolder>{
 
     private ArrayList<File> files;
     private Context ctx;
-    private Intent intent;
 
     public CardAdapter(Context ctx){
         this.ctx = ctx;
@@ -51,10 +51,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.FileHolder>{
             @Override
             public void onClick(View v) {
                 String link = files.get(pos).GetFileLink();
-                intent = new Intent(ctx, DownloadService.class);
-                intent.putExtra("url", link);
-                intent.putExtra("fileName", files.get(pos).GetFileName());
-                ctx.startService(intent);
+                if(files.get(pos).IsFileDirect()) {
+                    Intent intent = new Intent(ctx, DownloadService.class);
+                    intent.putExtra("url", link);
+                    intent.putExtra("fileName", files.get(pos).GetFileName());
+                    ctx.startService(intent);
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(files.get(pos).GetFileLink()));
+                    ctx.startActivity(intent);
+                }
             }
         });
     }

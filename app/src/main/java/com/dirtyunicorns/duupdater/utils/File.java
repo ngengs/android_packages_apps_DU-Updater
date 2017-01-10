@@ -13,12 +13,14 @@ public class File implements Parcelable, Serializable {
     private String FileSize;
     private String FileMD5;
     private String FildLink;
+    private boolean FileDirect;
 
     protected File(Parcel in) {
         FileName = in.readString();
         FileSize = in.readString();
         FileMD5 = in.readString();
         FildLink = in.readString();
+        FileDirect = in.readByte() != 0;
     }
 
     public static final Creator<File> CREATOR = new Creator<File>() {
@@ -49,6 +51,10 @@ public class File implements Parcelable, Serializable {
         FileMD5 = value;
     }
 
+    public void SetFileDirect(boolean value) {
+        FileDirect = value;
+    }
+
     public String GetFileName() {
         return FileName;
     }
@@ -65,6 +71,10 @@ public class File implements Parcelable, Serializable {
         return FildLink;
     }
 
+    public boolean IsFileDirect() {
+        return FileDirect;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -76,5 +86,6 @@ public class File implements Parcelable, Serializable {
         dest.writeString(FileSize);
         dest.writeString(FileMD5);
         dest.writeString(FildLink);
+        dest.writeByte((byte) (FileDirect ? 1 : 0));
     }
 }

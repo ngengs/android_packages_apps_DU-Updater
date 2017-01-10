@@ -6,7 +6,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.SystemClock;
-import android.util.Log;
 
 import com.dirtyunicorns.duupdater.objects.ServerVersion;
 
@@ -24,25 +23,24 @@ import java.util.Collections;
 /**
  * Created by mazwoz on 7/5/16.
  */
-public class Utils extends Vars{
+public class Utils extends Vars {
 
     protected static ConnectivityManager connectivityManager;
     protected static boolean connected = false;
+    private static ArrayList<File> files;
+    private static ArrayList<ServerVersion> serverVersions;
 
     public static String ConvertSpeed(double currentSpeed) {
         DecimalFormat df = new DecimalFormat("0.0");
         if (currentSpeed > 1024) {
-            return df.format(currentSpeed/1024) + "MB/s";
-        } else if ( currentSpeed < 0) {
+            return df.format(currentSpeed / 1024) + "MB/s";
+        } else if (currentSpeed < 0) {
             return "Stalled download, please wait";
         } else {
             df = new DecimalFormat("0");
             return df.format(currentSpeed) + "KB/s";
         }
     }
-
-    private static ArrayList<File> files;
-    private static ArrayList<ServerVersion> serverVersions;
 
     public static ArrayList<File> getFiles(final String dir, final boolean isDeviceFiles) {
         files = new ArrayList<>();
@@ -51,19 +49,24 @@ public class Utils extends Vars{
             public void run() {
                 //Looper.prepare();
                 JSONParser jsonParser = new JSONParser();
-                String path = "device=";
+                String path;
                 if (isDeviceFiles) {
-                    device = Build.BOARD;
-                    path += device + "&folder=" + dir;
-                    link += device;
+                    device = Build.PRODUCT;
+                    path = device + "/" + dir;
                 } else {
-                    path += "&folder=" + dir;
+                    path = "device=&folder=" + dir;
                 }
 
                 try {
-                    URI uri = new URI("https", null, "download.dirtyunicorns.com", 443, "/json.php", path, null);
-
-                    JSONObject json = jsonParser.getJSONFromUrl(uri.toASCIIString());
+                    URI uri;
+                    if (isDeviceFiles) {
+                        uri = new URI(link_scheme_hyperunicorns, null, link_host_hyperunicorns, link_port_hyperunicorns, link_path_hyperunicorns + path, null, null);
+                    } else {
+                        uri = new URI(link_scheme, null, link_host, link_port, link_path, path, null);
+                    }
+                    JSONObject json;
+                    if (isDeviceFiles) json = jsonParser.getJSONFromUrlHttp(uri.toASCIIString());
+                    else json = jsonParser.getJSONFromUrlHttps(uri.toASCIIString());
                     try {
                         if (json != null) {
                             JSONArray folders = json.getJSONArray(TAG_MASTER);
@@ -75,7 +78,8 @@ public class Utils extends Vars{
                                 f.SetFileSize(d.getString("filesize"));
                                 f.SetFileLink(d.getString("downloads"));
                                 f.SetFileMD5(d.getString("md5"));
-                                f.GetFileName();
+                                if (isDeviceFiles) f.SetFileDirect(d.getBoolean("direct"));
+                                else f.SetFileDirect(true);
                                 files.add(f);
                             }
                         }
@@ -92,11 +96,12 @@ public class Utils extends Vars{
         while (t.isAlive()) {
             SystemClock.sleep(200);
         }
-        Collections.reverse(files);
+        if (!isDeviceFiles) Collections.reverse(files);
         return files;
     }
 
-    public static ArrayList<ServerVersion> getServerVersions(final String dir, final boolean isDeviceFiles) {
+    public static ArrayList<ServerVersion> getServerVersions(final String dir) {
+        if (dir == null) throw new AssertionError();
         serverVersions = new ArrayList<>();
 
         Thread t = new Thread(new Runnable() {
@@ -104,19 +109,15 @@ public class Utils extends Vars{
             public void run() {
                 //Looper.prepare();
                 JSONParser jsonParser = new JSONParser();
-                String path = "device=";
-                if (isDeviceFiles) {
-                    device = Build.BOARD;
-                    path += device + "&folder=" + dir;
-                    link += device;
-                } else {
-                    path += "&folder=" + dir;
-                }
+                String path;
+                device = Build.PRODUCT;
+                path = device + "/" + dir;
 
                 try {
-                    URI uri = new URI("https", null, "download.dirtyunicorns.com", 443, "/json.php", path, null);
+                    URI uri;
+                    uri = new URI(link_scheme_hyperunicorns, null, link_host_hyperunicorns, link_port_hyperunicorns, link_path_hyperunicorns + path, null, null);
 
-                    JSONObject json = jsonParser.getJSONFromUrl(uri.toASCIIString());
+                    JSONObject json = jsonParser.getJSONFromUrlHttp(uri.toASCIIString());
                     try {
                         if (json != null) {
                             JSONArray folders = json.getJSONArray(TAG_MASTER);
@@ -124,21 +125,19 @@ public class Utils extends Vars{
                             for (int i = 0; i < folders.length(); i++) {
 
                                 JSONObject d = folders.getJSONObject(i);
-                                String link = d.getString("downloads");
                                 ServerVersion serverVersion = new ServerVersion();
                                 String[] buildInfo = d.getString("filename").replace(".zip", "").split("_");
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-hhmm");
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                String dateUpload = d.getString("date");
                                 try {
-                                    serverVersion.setBuildDate(dateFormat.parse(buildInfo[3].split("\\.")[0]));
+                                    serverVersion.setBuildDate(dateFormat.parse(dateUpload));
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                 }
 
                                 serverVersion.setAndroidVersion(buildInfo[2]);
-                                serverVersion.setBuildType(buildInfo[3].split("\\.")[2]);
-                                serverVersion.setMajorVersion(Integer.valueOf(buildInfo[3].split("\\.")[1].replace("v", "")));
-                                serverVersion.setMinorVersion(Integer.valueOf(buildInfo[3].split("\\.")[2].split("-")[0]));
-                                serverVersion.setLink(link);
+                                serverVersion.setBuildType("Hyperunicorns");
+                                serverVersion.setLink(d.getString("downloads"));
                                 serverVersions.add(serverVersion);
                             }
                         }
@@ -155,7 +154,6 @@ public class Utils extends Vars{
         while (t.isAlive()) {
             SystemClock.sleep(200);
         }
-        Collections.reverse(files);
         return serverVersions;
     }
 
@@ -170,8 +168,7 @@ public class Utils extends Vars{
 
 
         } catch (Exception e) {
-            System.out.println("CheckConnectivity Exception: " + e.getMessage());
-            Log.v("connectivity", e.toString());
+            e.printStackTrace();
         }
         return connected;
     }

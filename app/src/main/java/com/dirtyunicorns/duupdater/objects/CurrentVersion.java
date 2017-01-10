@@ -22,27 +22,8 @@ public class CurrentVersion extends Update implements Parcelable{
         }
 
         androidVersion = buildInfo[2];
-        buildType = buildInfo[3].split("\\.")[2];
-        majorVersion = Integer.valueOf(buildInfo[3].split("\\.")[1].replace("v",""));
-        minorVersion = Integer.valueOf(buildInfo[3].split("\\.")[2].split("-")[0]);
-
-        switch (buildType) {
-            case "OFFICIAL":
-                isOffical = true;
-                isWeekly = false;
-                isRc = false;
-                break;
-            case "WEEKLIES":
-                isWeekly = true;
-                isOffical = false;
-                isRc = false;
-                break;
-            case "RC":
-                isRc = true;
-                isOffical = false;
-                isWeekly = false;
-                break;
-        }
+        buildType = "Hyperunicorns";
+        isHyperunicorns = true;
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

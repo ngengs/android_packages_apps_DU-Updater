@@ -22,14 +22,6 @@ public class ServerVersion extends Update {
         this.androidVersion = androidVersion;
     }
 
-    public void setMajorVersion(int majorVersion) {
-        this.majorVersion = majorVersion;
-    }
-
-    public void setMinorVersion(int minorVersion) {
-        this.minorVersion = minorVersion;
-    }
-
     public void setBuildDate(Date buildDate) {
         this.buildDate = buildDate;
     }
