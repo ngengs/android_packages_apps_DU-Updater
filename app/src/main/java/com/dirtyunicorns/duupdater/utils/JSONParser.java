@@ -48,6 +48,7 @@ public class JSONParser {
             URL jsonURL = new URL(url);
             client = (HttpsURLConnection) jsonURL.openConnection();
             client.setRequestMethod("GET");
+            client.addRequestProperty("Cache-Control", "no-cache");
             client.setRequestProperty("Content-Type", "application/json");
             is = new BufferedInputStream(client.getInputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
@@ -75,6 +76,7 @@ public class JSONParser {
             URL jsonURL = new URL(url);
             client = (HttpURLConnection) jsonURL.openConnection();
             client.setRequestMethod("GET");
+            client.addRequestProperty("Cache-Control", "no-cache");
             client.setRequestProperty("Content-Type", "application/json");
             is = new BufferedInputStream(client.getInputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
