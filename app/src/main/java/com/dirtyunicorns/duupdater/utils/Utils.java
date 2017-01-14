@@ -1,5 +1,6 @@
 package com.dirtyunicorns.duupdater.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -127,7 +128,7 @@ public class Utils extends Vars {
                                 JSONObject d = folders.getJSONObject(i);
                                 ServerVersion serverVersion = new ServerVersion();
                                 String[] buildInfo = d.getString("filename").replace(".zip", "").split("_");
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 String dateUpload = d.getString("date");
                                 try {
                                     serverVersion.setBuildDate(dateFormat.parse(dateUpload));

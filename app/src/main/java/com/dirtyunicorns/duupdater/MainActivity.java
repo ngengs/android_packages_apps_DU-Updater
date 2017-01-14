@@ -86,7 +86,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setCheckedItem(R.id.hyperunicorns);
         frag = new FragmentHyperunicorns();
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        assert collapsingToolbarLayout != null;
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.collapsing_toolbar_layout_collapsed_title_color));
+        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.collapsing_toolbar_layout_expanded_title_color));
         collapsingToolbarLayout.setTitle(getString(R.string.hyperunicorns));
         UpdateFragment();
     }
@@ -110,11 +111,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.collapsing_toolbar_layout_collapsed_title_color));
+        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.collapsing_toolbar_layout_expanded_title_color));
         int id = item.getItemId();
         switch (id) {
             case R.id.hyperunicorns:
                 frag = new FragmentHyperunicorns();
-                assert collapsingToolbarLayout != null;
                 collapsingToolbarLayout.setTitle(getString(R.string.hyperunicorns));
                 break;
             case R.id.gappsbeans:
@@ -127,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.settings:
                 frag = new FragmentSettings();
-                assert collapsingToolbarLayout != null;
                 collapsingToolbarLayout.setTitle(getString(R.string.settings_alt));
         }
         mDrawerLayout.closeDrawers();

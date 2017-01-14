@@ -33,14 +33,6 @@ public class Update {
         return retProp;
     }
 
-    public String getBuildType() {
-        return buildType;
-    }
-
-    public String getAndroidVersion() {
-        return androidVersion;
-    }
-
     public Date getBuildDate() {
         return buildDate;
     }
