@@ -44,8 +44,8 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
-            android:name=".shortcuts.DynamicGapps"
-            android:label="@string/dynamic_gapps"
+            android:name=".shortcuts.BeansGapps"
+            android:label="@string/beans_gapps"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

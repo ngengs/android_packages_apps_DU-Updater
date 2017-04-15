@@ -20,7 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.dirtyunicorns.duupdater.fragments.FragmentGappsDynamic;
+import com.dirtyunicorns.duupdater.fragments.FragmentGappsBeans;
 import com.dirtyunicorns.duupdater.fragments.FragmentHyperunicorns;
 import com.dirtyunicorns.duupdater.fragments.FragmentGappsTR;
 import com.dirtyunicorns.duupdater.fragments.FragmentSettings;
@@ -117,10 +117,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 assert collapsingToolbarLayout != null;
                 collapsingToolbarLayout.setTitle(getString(R.string.hyperunicorns));
                 break;
-            case R.id.gappsdynamic:
-                frag = new FragmentGappsDynamic();
-                assert collapsingToolbarLayout != null;
-                collapsingToolbarLayout.setTitle(getString(R.string.dynamic_gapps));
+            case R.id.gappsbeans:
+                frag = new FragmentGappsBeans();
+                collapsingToolbarLayout.setTitle(getString(R.string.beans_gapps));
                 break;
             case R.id.gappstr:
                 frag = new FragmentGappsTR();
@@ -185,8 +184,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void InitDynamicGapps() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
-        navigationView.setCheckedItem(R.id.gappsdynamic);
-        frag = new FragmentGappsDynamic();
+        navigationView.setCheckedItem(R.id.gappsbeans);
+        frag = new FragmentGappsBeans();
         UpdateFragment();
     }
 
