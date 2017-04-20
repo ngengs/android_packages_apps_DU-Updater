@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         pm.setComponentEnabledSetting(new ComponentName(this, com.dirtyunicorns.duupdater.LauncherActivity.class), newState, PackageManager.DONT_KILL_APP);
     }
 
-    public void InitDynamicGapps() {
+    public void InitBeansGapps() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
         navigationView.setCheckedItem(R.id.gappsbeans);
